@@ -66,6 +66,12 @@ export const Home: React.FunctionComponent = (): JSX.Element => {
                       >
                         Temps
                       </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      >
+                        Résultat
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -76,6 +82,15 @@ export const Home: React.FunctionComponent = (): JSX.Element => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{score}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{time}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              score >= 4 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {score >= 4 ? 'Réussi' : 'Raté'}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
