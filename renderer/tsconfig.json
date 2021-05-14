@@ -16,8 +16,19 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "rootDir": ".",
+    "baseUrl": "./",
+    "paths": {
+      "@/core/*": ["core/*"],
+      "@/lib/*": ["lib/*"],
+      "@/layouts/*": ["core/layouts/*"],
+      "@/anchors/*": ["core/anchors/*"],
+      "@/components": ["core/components"],
+      "@/components/*": ["core/components/*"],
+      "@/public/*": ["public/*"]
+    }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["postcss.config.js", "node_modules"],
   "include": ["**/*.ts", "**/*.tsx", "**/*.js"]
 }
