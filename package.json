@@ -6,8 +6,9 @@
   "productName": "ElectronTypescriptNext",
   "scripts": {
     "clean": "rimraf dist main renderer/out renderer/.next",
-    "start": "next ./renderer",
-    "dev": "yarn build-electron && electron .",
+    "web": "next ./renderer",
+    "desktop": "yarn build-electron && electron .",
+    "dev": "next ./renderer",
     "build-renderer": "next build renderer && next export renderer",
     "build-electron": "tsc -p electron-src",
     "build": "yarn build-renderer && yarn build-electron",

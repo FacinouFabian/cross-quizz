@@ -102,7 +102,9 @@ export const Home: React.FunctionComponent<Props> = ({ data }): JSX.Element => {
     if (user.email === undefined) router.push('/auth/signin')
   })
 
-  return (
+  return user.email === undefined ? (
+    <div></div>
+  ) : (
     <Layout title="Home">
       <div className="w-full h-full flex flex-col items-center justify-center">
         <div
