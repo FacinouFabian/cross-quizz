@@ -23,6 +23,7 @@ export const Home: React.FunctionComponent<Props> = ({ data }): JSX.Element => {
   const [startAt, setStartAt] = React.useState<number>(0)
   const [quizzStarted, setQuizzStarted] = React.useState<boolean>(false)
   const [quizzEnded, setQuizzEnded] = React.useState<boolean>(false)
+  const [success, setSuccess] = React.useState<boolean>(false)
   const router = useRouter()
 
   const nextQuestion = async () => {
@@ -31,6 +32,10 @@ export const Home: React.FunctionComponent<Props> = ({ data }): JSX.Element => {
     if (questionID === data.prepareQuizz.length) {
       const timeResult = getTime()
       setQuizzEnded(true)
+      const score = sum(results)
+
+      if (score >= 4) setSuccess(true)
+
       const query = gql`
         mutation {
           addScore(value: ${sum(results)}, time: "${timeResult}", userId: ${id}) {
@@ -107,12 +112,13 @@ export const Home: React.FunctionComponent<Props> = ({ data }): JSX.Element => {
         >
           {data.prepareQuizz.map((question, index) => (
             <div
+              key={index}
               className={`${
                 questionID - 1 != index ? 'hidden' : 'flex'
               } flex-col items-center justify-center space-y-16`}
             >
-              <div className="font-medium text-2xl">{question.sentence}</div>
-              <div key={index} className="grid grid-cols-2 gap-6">
+              <div className="text-center font-medium text-xl">{question.sentence}</div>
+              <div className="grid grid-cols-2 gap-6">
                 {question.answers.map((text, answerID) => (
                   <Answer key={answerID} reference={index} text={text} parentData={parentData} />
                 ))}
@@ -144,23 +150,48 @@ export const Home: React.FunctionComponent<Props> = ({ data }): JSX.Element => {
         <div className={`${quizzEnded ? 'flex' : 'hidden'} flex-col items-center justify-center space-y-4`}>
           {quizzEnded && <div>Terminé en {time}</div>}
           <div>Score: {quizzEnded && sum(results)}</div>
+          <div>
+            <span
+              className={`${
+                quizzEnded && !success ? 'inline-flex' : 'hidden'
+              } items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800`}
+            >
+              Sorry you did not pass the quizz
+            </span>
+            <span
+              className={`${
+                quizzEnded && success ? 'inline-flex' : 'hidden'
+              } items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800`}
+            >
+              Congratulations you passed the quiz !
+            </span>
+          </div>
           <button
             type="button"
-            /* onClick={() => router.push('/')} */
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Recommencer
           </button>
         </div>
-        <button
-          type="button"
-          onClick={start}
-          className={`${
-            quizzStarted ? 'hidden' : 'inline-flex'
-          } items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-        >
-          Commencer !
-        </button>
+        <div className={`${quizzStarted ? 'hidden' : 'flex flex-col items-center justify-center space-y-4'}`}>
+          <p className="text-center">
+            Bienvenue au crozz-quizz ! <br /> Vous aurez une série de 8 questions avec pour chacune 4 réponses possible
+            dont une qui est la bonne.
+            <br />
+            A la fin du quizz, vous pourrez voir votre score ainsi que le temps que vous avez pris.
+            <br />
+            Chaque bonne réponse vaut 1 point.
+            <br />
+            Notez que pour gagner vous devez avoir au moins <span className="font-bold">4 points</span>.
+          </p>
+          <button
+            type="button"
+            onClick={start}
+            className={`inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+          >
+            Commencer !
+          </button>
+        </div>
       </div>
       <style jsx global>{`
         body {
@@ -202,7 +233,7 @@ export const Home: React.FunctionComponent<Props> = ({ data }): JSX.Element => {
 export const getStaticProps: GetStaticProps = async () => {
   const query = gql`
     mutation {
-      prepareQuizz(nb: 2) {
+      prepareQuizz(nb: 6) {
         sentence
         answers
         expected
